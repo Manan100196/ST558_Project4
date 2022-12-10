@@ -55,23 +55,60 @@ dashboardPage(skin = "blue",
       tabItems(
         tabItem(tabName = "about",
           fluidRow(
-            column(6,box(width=NULL,height=45,background="orange",
-                         title="App Information",
+            column(6,h1("App Information"),
+                   box(width=NULL,background="yellow",
                   h4("The app provides information regarding the source data. Based on the data, 
                   exploratory data analysis plots will be created as per the variables and plot 
                   type selected by the user. The app also has a modelling page which has 
                   information regarding how each models fits and train the data. Finally, the 
                   app will also display the predicted value of testing dataset"))
                    ),
-            column(6,box(width=NULL,height=45,background="orange",
-                         title="Discussion of data and its source",
+            column(6,h1("Discussion of data"),
+                   box(width=NULL,background="yellow",
                   h4("The dataset is obtained from kaggle. The url is https://www.kaggle.com/datasets/prathamtripathi/regression-with-neural-networking
 The dataset provides details of the individual elements present in the mixture of cement. The goal
 is to predict the strength of concrete produced. More the strength, better it is for the
 construction company."))
             )
+          ),
+        fluidRow(
+          column(12,h1("Purpose of each page"),
+                 box(width=NULL,height=45,background="red",
+                h4("Purpose")
           )
         )
+        ),
+        fluidRow(
+          column(12,h1("Image"),
+                 box(width=NULL,height=45,background="red",
+                        h4("Image")
+          )
+          )
+        )
+      ),
+    tabItem(tabName = "eda",
+      fluidRow(
+        column(4,
+          box(width = 12, title = "Contingency Table",
+              selectizeInput("type", "Type", selected = "3-way", 
+                             choices = levels(as.factor(c("3-way", "2-way"))))),
+          br(),
+          box(width = 12, title = "Type of Plots",
+              selectizeInput("plot1", "Plot 1", selected = "Bar Plot", 
+                             choices = levels(as.factor(c("Bar Graph", "Line Graph")))),
+              selectizeInput("plot2", "Plot 2", selected = "Scatter Plot", 
+                             choices = levels(as.factor(c("Scatter Plot", "Correlation Plot"))))
+              ),
+          br(),
+          box(width = 12, title = "Variable Filters",
+              sliderInput("nrow","Count of Data", min = 100, max = 1000, value = 800),
+              selectizeInput("var1", "Variables for Plot 1", selected = "Bar Plot", 
+                             choices = levels(as.factor(c("Bar Graph", "Line Graph")))),
+              selectizeInput("var2", "Variable for Plot 2", selected = "Bar Plot", 
+                             choices = levels(as.factor(c("Bar Graph", "Line Graph"))))
+              )
+        )
+      )
       )
     )
-)
+))
