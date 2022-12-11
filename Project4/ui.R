@@ -89,34 +89,41 @@ construction company."))
     tabItem(tabName = "eda",
       fluidRow(
         column(4,
-          box(width = 12, title = "Contingency Table",
+          box(width = NULL,height = 250, title = "Contingency Table",
               selectizeInput("cont_var", "Contigency Variable", selected = "water", 
-                             choices = levels(as.factor(c("water", "cement"))))),
+                             choices = levels(as.factor(c("water", "cement")))))),
+          column(8, 
+                 box(width=NULL,height = 250, title="Contingency Table",tableOutput("table_contingency"))
+          )),
           br(),
-          box(width = 12, title = "Type of Plots",
-              selectizeInput("plot1", "Plot 1", selected = "Bar Plot", 
-                             choices = levels(as.factor(c("Bar Graph", "Line Graph")))),
-              selectizeInput("plot2", "Plot 2", selected = "Scatter Plot", 
-                             choices = levels(as.factor(c("Scatter Plot", "Correlation Plot"))))
-              ),
+      fluidRow(
+        column(4,
+          box(width = 12, height = 450, title = "Type of Plots",
+                   selectizeInput("plot1", "Plot 1", selected = "Bar Plot", 
+                                  choices = levels(as.factor(c("Bar Graph", "Line Graph")))),
+                   selectizeInput("plot2", "Plot 2", selected = "Scatter Plot", 
+                                  choices = levels(as.factor(c("Scatter Plot", "Correlation Plot"))))
+               )
+                      ),
+        column(8,
+          box(width = NULL, height = 450, title = "PLOT 1", plotOutput("plot_1"))
+               )),
           br(),
-          box(width = 12, title = "Variable Filters",
-              sliderInput("nrow","Count of Data", min = 100, max = 1000, value = 800),
-              selectizeInput("var1", "Variables for Plot 1", selected = "Bar Plot", 
-                             choices = levels(as.factor(c("Bar Graph", "Line Graph")))),
-              selectizeInput("var2", "Variable for Plot 2", selected = "Bar Plot", 
-                             choices = levels(as.factor(c("Bar Graph", "Line Graph"))))
-              )
-        ),
-      column(8, 
-        box(width=NULL,title="Contingency Table",tableOutput("table_contingency"))
+      fluidRow(
+        column(4,
+          box(width = 12, height = 450, title = "Variable Filters",
+                   sliderInput("nrow","Count of Data", min = 100, max = 1000, value = 700),
+                   selectizeInput("var1", "Variables for Plot 1", selected = "Cement", 
+                                  choices = colnames(data %>% select(Cement:Strength))),
+                   selectizeInput("var2", "Variable for Plot 2", selected = "Cement", 
+                                  choices = colnames(data %>% select(Cement:Strength)))
+               )),
+        column(8,
+          box(width = NULL, height = 450, title = "PLOT 2", plotOutput("plot_2"))
+        )
       )
-      ),
-    fluidRow(
-      column(8,
-      box(width = NULL, title = "PLOT 1", plotOutput("plot_1"))
+          
+        )
+      )
       )
     )
-      )
-    )
-))
