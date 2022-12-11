@@ -90,8 +90,8 @@ construction company."))
       fluidRow(
         column(4,
           box(width = 12, title = "Contingency Table",
-              selectizeInput("type", "Type", selected = "3-way", 
-                             choices = levels(as.factor(c("3-way", "2-way"))))),
+              selectizeInput("cont_var", "Contigency Variable", selected = "water", 
+                             choices = levels(as.factor(c("water", "cement"))))),
           br(),
           box(width = 12, title = "Type of Plots",
               selectizeInput("plot1", "Plot 1", selected = "Bar Plot", 
@@ -107,8 +107,16 @@ construction company."))
               selectizeInput("var2", "Variable for Plot 2", selected = "Bar Plot", 
                              choices = levels(as.factor(c("Bar Graph", "Line Graph"))))
               )
-        )
+        ),
+      column(8, 
+        box(width=NULL,title="Contingency Table",tableOutput("table_contingency"))
       )
+      ),
+    fluidRow(
+      column(8,
+      box(width = NULL, title = "PLOT 1", plotOutput("plot_1"))
+      )
+    )
       )
     )
 ))
