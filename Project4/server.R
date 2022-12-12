@@ -10,12 +10,10 @@ library(shiny)
 library(tidyverse)
 library(ggcorrplot)
 library(car)
+library(caret)
 
 
 data <- read.csv("/Users/mjiwtan/Downloads/concrete_data.csv")
-# summary(data$Cement) # 275
-# summary(data$Strength) # 50
-# summary(data$Water) # 150
 process <- preProcess(as.data.frame(data), method=c("range"))
 data <- predict(process, as.data.frame(data))
 data$water_category <- ifelse(data$Water>0.5, 1, 0)
@@ -55,19 +53,22 @@ shinyServer(function(input, output) {
       ggcorrplot(round(cor(filter_data_2 ), 1))
     }
   })
-  variable_data <- reactive({
-    var_data <- c(input$variable_for_data, input$nrow_records)
+  output$image<-renderImage({
+    list(src='Concrete.jpg')
+  }, deleteFile = FALSE)
+  filter_row_data <- reactive({
+    row_data <- data %>% sample_frac(input$nrow_records, replace = FALSE)
   })
   output$variable_for_data <- renderDataTable({
-    var_filter_data <- data %>% sample_frac(0.02, replace = FALSE)
-    var_filter_data <- var_filter_data %>% select(variable_data()[1])
-  })
+    #var_filter_data <- data %>% sample_frac(input$nrow_records, replace = FALSE)
+    var_filter_data <- filter_row_data() %>% select(input$variable_for_data)
+  }, options = list(pageLength = 10, columnDefs = list(list(targets = 4))))
   output$downloadData <- downloadHandler(
     filename = function() { 
       paste("Concrete-Strength", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
-      data <- data %>% select(Cement:Strength)
+      data <- filter_row_data() %>% select(input$variable_for_data) 
       write.csv(data, file)
     })
     # output$distPlot <- renderPlot({

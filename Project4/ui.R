@@ -1,46 +1,6 @@
 library(shiny)
 library(shinydashboard)
 
-#About
-"The app provides information regarding the source data. Based on the data, exploratory data
-analysis plots will be created as per the variables and plot type
-selected by the user. The app also has a modelling page which has information regarding how each
-models fits and train the data. Finally, the app will also display the predicted value of testing
-dataset"
-
-#Discussion of data and its source
-"The dataset is obtained from kaggle. The url is
-https://www.kaggle.com/datasets/prathamtripathi/regression-with-neural-networking
-The dataset provides details of the individual elements present in the mixture of cement. The goal
-is to predict the strength of concrete produced. More the strength, better it is for the
-construction company."
-
-#
-
-#data <- read.csv("/Users/mjiwtan/Downloads/concrete_data.csv")
-
-# Define UI for application that draws a histogram
-# shinyUI(fluidPage(
-# 
-#     # Application title
-#     titlePanel("Old Faithful Geyser Data"),
-# 
-#     # Sidebar with a slider input for number of bins
-#     sidebarLayout(
-#         sidebarPanel(
-#             sliderInput("bins",
-#                         "Number of bins:",
-#                         min = 1,
-#                         max = 50,
-#                         value = 30)
-#         ),
-# 
-#         # Show a plot of the generated distribution
-#         mainPanel(
-#             plotOutput("distPlot")
-#         )
-#     )
-# ))
 dashboardPage(
   dashboardHeader(title = "Concrete Strength", titleWidth = 600),
   
@@ -57,32 +17,36 @@ dashboardPage(
           fluidRow(
             column(6,h1("App Information"),
                    box(width=NULL,background="red",
-                  h4("The app provides information regarding the source data. Based on the data, 
-                  exploratory data analysis plots will be created as per the variables and plot 
-                  type selected by the user. The app also has a modelling page which has 
-                  information regarding how each models fits and train the data. Finally, the 
-                  app will also display the predicted value of testing dataset"))
+                  h4("The app provides information regarding the concrete strength data. Based on the data, 
+                  plots will be created as per the variables, number of samples and plot 
+                  type selected by the user. The app also has a modelling page where different
+                  machine leaning models are deployed. Based, on the selection of the model, respective
+                  model results will be displayed. FInally, the user can download the data and visualize
+                  the filter data as well."))
                    ),
             column(6,h1("Discussion of data"),
                    box(width=NULL,background="red",
                   h4("The dataset is obtained from kaggle. The url is https://www.kaggle.com/datasets/prathamtripathi/regression-with-neural-networking
-The dataset provides details of the individual elements present in the mixture of cement. The goal
+The dataset provides details of the individual elements (cement, water, ash etc.) present in the mixture of concrete. The goal
 is to predict the strength of concrete produced. More the strength, better it is for the
 construction company."))
             )
           ),
         fluidRow(
-          column(12,h1("Purpose of each page"),
-                 box(width=NULL,height=45,background="red",
-                h4("Purpose")
+          column(12, h1("Purpose of each page"),
+                 box(width=NULL,height=250,background="red",
+                h4("The first page is an about page which briefly summarize the purpose of the app and what features it has."),
+                h4("The second page has numerical (contingency table) anmd graphical summaries (bar plot, scatter plot etc.). The plots and summary tables are customized as per user input and selection"),
+                h4("The third page is a modeling page where based on the variables and model selected, the model is fitted and prediction on testing data is obtained."),
+                h4("The last page is where user can see the raw data of concrete strength. User can download the data from this page as well.")
+                
           )
         )
         ),
         fluidRow(
           column(12,h1("Image"),
-                 box(width=NULL,height=45,background="red",
-                        h4("Image")
-          )
+                 
+                     imageOutput("image")
           )
         )
       ),
@@ -151,8 +115,11 @@ construction company."))
                        ),
                        fluidRow(
                          column(12,
-                                box(width=NULL,title="Regression Decision Tree",
-                                    status="danger"
+                                box(width=NULL,title="Regression Tree",
+                                    status="danger",
+                                    h4("A regression tree is basically a decision tree that is used for the task of regression which can be used to predict continuous valued outputs.
+                                       A regression tree is built through a process known as binary recursive partitioning, which is an iterative process that splits the data into partitions or branches, and then continues splitting each partition into smaller groups as the method moves up each branch."),
+                                    h4("Pruning: Since the tree is grown from the Training Set, a fully developed tree typically suffers from over-fitting (i.e., it is explaining random elements of the Training Set that are not likely to be features of the larger population). This over-fitting results in poor performance on real life data.")
                                     
                                     
                                 )
@@ -161,7 +128,10 @@ construction company."))
                        fluidRow(
                          column(12,
                                 box(width=NULL,title="Random Forest Model",
-                                    status="danger"
+                                    status="danger",
+                                    h4("In bagging, a number of trees are created from a boostraped sample of data. The average of these trees is then used as prediction.
+                                       Random Forest uses similar concept of bagging. The fundamental change is that the model uses feature randomness which is a random subset of features. This phenomenon ensures that there is low correlation among the decision trees created."),
+                                    h4("The drawback of this method is that it is a black box method since it involves more complexity.")
                                     
                                 )
                          )
