@@ -4,6 +4,7 @@ library(shinydashboard)
 dashboardPage(
   dashboardHeader(title = "Concrete Strength", titleWidth = 600),
   
+  # Sidebar Menu
   dashboardSidebar(sidebarMenu(
     menuItem("About", tabName = "about", icon = icon("archive")),
     menuItem("Data Exploration",tabName="eda",icon=icon("bar-chart")),
@@ -13,6 +14,7 @@ dashboardPage(
     
     dashboardBody(
       tabItems(
+  # About Page
         tabItem(tabName = "about",
           fluidRow(
             column(6,h1("App Information"),
@@ -45,11 +47,13 @@ construction company."))
         ),
         fluidRow(
           column(12,h1("Image"),
-                 
                      imageOutput("image")
           )
         )
       ),
+  # Data Exploration
+  
+  # Type of Contigency table
     tabItem(tabName = "eda",
       fluidRow(
         column(4,
@@ -60,6 +64,7 @@ construction company."))
                  box(width=NULL,height = 250, title="Contingency Table",tableOutput("table_contingency"))
           )),
           br(),
+  # Selection for plot 1
       fluidRow(
         column(4,
           box(width = 15, background = "red", height = 450, title = "Type of Plots",
@@ -73,6 +78,7 @@ construction company."))
           box(width = NULL, height = 450, title = "PLOT 1", plotOutput("plot_1"))
                )),
           br(),
+  # Selection for plot 2
       fluidRow(
         column(4,
           box(width = 15, background = "red", height = 450, title = "Variable Filters",
@@ -88,6 +94,9 @@ construction company."))
       )
           
         ),
+  # Modeling
+  
+  # Theory tab
     tabItem(tabName = "model",
             tabsetPanel(
               tabPanel("Modeling Theory",
@@ -137,6 +146,7 @@ construction company."))
                          )
                        )
               ),
+  # Fitting the model tab
             tabPanel("Model Fitting",
                   fluidRow(
                     br()
@@ -214,6 +224,7 @@ construction company."))
                   )
                   
             ),
+  # Prediction tab
             tabPanel("Prediction",
               fluidRow(
                 br(),
@@ -254,6 +265,7 @@ construction company."))
               ))
             )
             ))),
+  # Data page
     tabItem(tabName = "data",
       column(4, 
              box(width = 18, background = "red", title = "Select Variable", 

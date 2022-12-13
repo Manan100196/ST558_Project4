@@ -5,7 +5,7 @@ library(ggcorrplot)
 library(car)
 library(caret)
 
-
+#Uploading data and pre-processing it
 data <- read.csv("concrete_data.csv")
 process <- preProcess(as.data.frame(data), method=c("range"))
 data <- predict(process, as.data.frame(data))
@@ -15,7 +15,7 @@ data$strength_category <- ifelse(data$Strength>0.5,1,0)
 
 shinyServer(function(input, output) 
   {
-  # About
+  # Image for About page 
   output$image<-renderImage({
     list(src='Concrete.jpg')
   }, deleteFile = FALSE)
@@ -27,6 +27,7 @@ shinyServer(function(input, output)
   random_data <- reactive({
     filter_data <- data[sample(nrow(data), cont_func()[6]),]
   })
+  # Contigency table
   output$table_contingency <- renderTable({
     filter_data <- random_data()
     if(cont_func()[1] == "water"){
@@ -35,6 +36,7 @@ shinyServer(function(input, output)
       table(filter_data$cement_category,filter_data$strength_category)
     }
   })
+  # Plot 1
   output$plot_1 <- renderPlot({
     filter_data <- random_data()
     if(cont_func()[2] == "Bar Graph"){
@@ -44,6 +46,7 @@ shinyServer(function(input, output)
            type = "l")
     }
   })
+  # Plot 2
   output$plot_2 <- renderPlot({
     filter_data <- random_data()
     if(cont_func()[3] == "Scatter Plot"){
@@ -73,15 +76,6 @@ shinyServer(function(input, output)
   num_trees_rf <- eventReactive(input$run_model,{
     input$num_trees
   })
-  # split_size <- reactive({
-  #   train_size <- sample(nrow(data), nrow(data)*split())
-  # })
-  # split_train_data <- reactive({
-  #   data_for_train <- data[split_size(),]
-  # })
-  # split_test_data <- reactive({
-  #   data_for_test <- data[-split_size(),]
-  # })
   
   # Linear Regression
   output$linear_reg <- renderText({
@@ -139,10 +133,12 @@ shinyServer(function(input, output)
   filter_row_data <- reactive({
     row_data <- data %>% sample_frac(input$nrow_records, replace = FALSE)
   })
+  # Data table
   output$variable_for_data <- renderDataTable({
     #var_filter_data <- data %>% sample_frac(input$nrow_records, replace = FALSE)
     var_filter_data <- filter_row_data() %>% select(input$variable_for_data)
   }, options = list(pageLength = 10, columnDefs = list(list(targets = 4))))
+  # Download data
   output$downloadData <- downloadHandler(
     filename = function() { 
       paste("Concrete-Strength", Sys.Date(), ".csv", sep="")
