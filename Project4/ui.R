@@ -136,7 +136,84 @@ construction company."))
                                 )
                          )
                        )
-              )
+              ),
+            tabPanel("Model Fitting",
+                  fluidRow(
+                    br()
+                  ),
+                  fluidRow(
+                     column(4,
+                          box(width = 12, height = 320, background = "red", title = "Proportion of Training Data",
+                              sliderInput("split","Proportion of Training Data", min = 0.5, max = 0.8, value = 0.7),
+                          )
+                       ),
+                     column(8,
+                            box(width = 18, title = "Select Variable for linear regression", 
+                                checkboxGroupInput("variable_for_lm",
+                                                   "Variables For Linear regression", c("Cement" = "Cement",
+                                                                           "Furnace"= "Blast.Furnace.Slag",
+                                                                           "Ash" = "Fly.Ash", "Water" = "Water",
+                                                                           "Superplasticizer" = "Superplasticizer",
+                                                                           "Coarse" = "Coarse.Aggregate",
+                                                                           "Fine" = "Fine.Aggregate", "Age"= "Age",
+                                                                           "Strength"="Strength"), 
+                                                   selected = c("Cement", "Fly.Ash", "Water", 
+                                                                "Superplasticizer", "Strength")))
+                     )
+                     ),
+                  fluidRow(
+                    column(4
+                           ),
+                    column(5,
+                           box(width = 18, title = "Select Variable for Regression Tree", 
+                               checkboxGroupInput("variable_for_regression",
+                                                  "Variables For Regression", c("Cement" = "Cement",
+                                                                          "Furnace"= "Blast.Furnace.Slag",
+                                                                          "Ash" = "Fly.Ash", "Water" = "Water",
+                                                                          "Superplasticizer" = "Superplasticizer",
+                                                                          "Coarse" = "Coarse.Aggregate",
+                                                                          "Fine" = "Fine.Aggregate", "Age"= "Age",
+                                                                          "Strength"="Strength"), 
+                                                  selected = c("Cement", "Fly.Ash", "Water", 
+                                                               "Superplasticizer", "Strength")))
+                    ),
+                    column(3,
+                           box(width = 18, height = 320, title = "Depth for Regression Tree",
+                               sliderInput("regression_depth","Value of Cp", min = 0.001, max = 0.9, value = 0.02))
+                           )
+                  ),
+                  fluidRow(
+                    column(4,
+                           box(width = 12, background = "red", height = 100, actionButton("run_model","Run the Model"))),
+                    column(5,
+                           box(width = 18, title = "Select Variable for Random Forest", 
+                               checkboxGroupInput("variable_for_random_forest",
+                                                  "Variables For Random Forest", c("Cement" = "Cement",
+                                                                                   "Furnace"= "Blast.Furnace.Slag",
+                                                                                   "Ash" = "Fly.Ash", "Water" = "Water",
+                                                                                   "Superplasticizer" = "Superplasticizer",
+                                                                                   "Coarse" = "Coarse.Aggregate",
+                                                                                   "Fine" = "Fine.Aggregate", "Age"= "Age",
+                                                                                   "Strength"="Strength"), 
+                                                  selected = c("Cement", "Fly.Ash", "Water", 
+                                                               "Superplasticizer", "Strength")))
+                    ),
+                    column(3,
+                           box(width = 18, height = 320, title = "Depth for Random Forest",
+                               sliderInput("num_trees","Number of Trees", min = 3, max = 8, value = 4))
+                    )
+                    
+                  ),
+                  fluidRow(
+                    column(4,
+                           box(width = 12, background = "green", title = "Test MSE for Linear Regression", textOutput("linear_reg"))),
+                    column(4,
+                           box(width = 12, background = "green", title = "Test MSE for Regression Tree", textOutput("reg_tree"))),
+                    column(4,
+                           box(width = 12, background = "green", title = "Test MSE for Random Forest", textOutput("random_forest")))
+                  )
+                  
+            )
       
     )
       ),

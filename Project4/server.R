@@ -1,11 +1,4 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#install.packages("car")
+
 library(shiny)
 library(tidyverse)
 library(ggcorrplot)
@@ -20,7 +13,14 @@ data$water_category <- ifelse(data$Water>0.5, 1, 0)
 data$cement_category <- ifelse(data$Cement>0.5,1,0)
 data$strength_category <- ifelse(data$Strength>0.5,1,0)
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output) 
+  {
+  # About
+  output$image<-renderImage({
+    list(src='Concrete.jpg')
+  }, deleteFile = FALSE)
+  
+  # Data Exploration
   cont_func <- reactive({
     cont_val <- c(input$cont_var, input$plot1, input$plot2, input$var1, input$var2, input$nrow)
   })
@@ -40,7 +40,7 @@ shinyServer(function(input, output) {
     if(cont_func()[2] == "Bar Graph"){
       ggplot(data=filter_data, aes(x=strength_category)) + geom_bar()
     }else{
-      plot(seq(1:cont_func()[6]), filter_data[,cont_func()[4]], xlab = "Strength", ylab = cont_func()[4], 
+      plot(seq(1:cont_func()[6]), filter_data[,cont_func()[4]], xlab = "Number of Records", ylab = cont_func()[4], 
            type = "l")
     }
   })
@@ -53,9 +53,89 @@ shinyServer(function(input, output) {
       ggcorrplot(round(cor(filter_data_2 ), 1))
     }
   })
-  output$image<-renderImage({
-    list(src='Concrete.jpg')
-  }, deleteFile = FALSE)
+  
+  # Modeling
+  split<-eventReactive(input$run_model,{
+    input$split
+  })
+  var_lm<-eventReactive(input$run_model,{
+    input$variable_for_lm
+  })
+  var_reg_tree<-eventReactive(input$run_model,{
+    input$variable_for_regression
+  })
+  reg_tree_cp<-eventReactive(input$run_model,{
+    input$regression_depth
+  })
+  var_rf<-eventReactive(input$run_model,{
+    input$variable_for_random_forest
+  })
+  num_trees_rf <- eventReactive(input$run_model,{
+    input$num_trees
+  })
+  # split_size <- reactive({
+  #   train_size <- sample(nrow(data), nrow(data)*split())
+  # })
+  # split_train_data <- reactive({
+  #   data_for_train <- data[split_size(),]
+  # })
+  # split_test_data <- reactive({
+  #   data_for_test <- data[-split_size(),]
+  # })
+  
+  # Linear Regression
+  output$linear_reg <- renderText({
+    train_size <- sample(nrow(data), nrow(data)*split())
+    data_for_train <- data[train_size,]
+    data_for_test <- data[-train_size,]
+    train_data <- data_for_train %>% select(var_lm())
+    test_data <- data_for_test %>% select(var_lm())
+    
+    lm_fit <- lm(Strength~., data = train_data, trControl=trainControl(method = "repeatedcv", number = 7, repeats = 3))
+    lm_predict <- predict(lm_fit,test_data)
+    lm_test_mse <- mean((test_data$Strength-lm_predict)^2)
+    print(lm_test_mse)
+  })
+  
+  # Regression Tree
+  output$reg_tree <- renderText({
+    train_size <- sample(nrow(data), nrow(data)*split())
+    data_for_train <- data[train_size,]
+    data_for_test <- data[-train_size,]
+    train_data <- data_for_train %>% select(var_reg_tree())
+    test_data <- data_for_test %>% select(var_reg_tree())
+    
+    reg_tree_fit <- train(Strength~., data = train_data, 
+                          method = "rpart",
+                          trControl=trainControl(method = "repeatedcv", number = 7),
+                          tuneGrid = (expand.grid(cp = reg_tree_cp())))
+    
+    reg_tree_predict <- predict(reg_tree_fit,test_data)
+    reg_tree_mse <- mean((test_data$Strength-reg_tree_predict)^2)
+    print(reg_tree_mse)
+  })
+  
+  # Random Forest
+  output$random_forest <- renderText({
+    train_size <- sample(nrow(data), nrow(data)*split())
+    data_for_train <- data[train_size,]
+    data_for_test <- data[-train_size,]
+    train_data <- data_for_train %>% select(var_rf())
+    test_data <- data_for_test %>% select(var_rf())
+    
+    rf_fit <- train(Strength~., data = train_data, 
+                          method = "rf",
+                          tuneGrid = expand.grid(mtry=ncol(train_data)/3),
+                          ntree = num_trees_rf(),
+                          trControl=trainControl(method = "repeatedcv", number = 7),
+                          )
+    
+    rf_predict <- predict(rf_fit,test_data)
+    rf_mse <- mean((test_data$Strength-rf_predict)^2)
+    print(rf_mse)
+  })
+  
+  # Data page
   filter_row_data <- reactive({
     row_data <- data %>% sample_frac(input$nrow_records, replace = FALSE)
   })
@@ -71,19 +151,6 @@ shinyServer(function(input, output) {
       data <- filter_row_data() %>% select(input$variable_for_data) 
       write.csv(data, file)
     })
-    # output$distPlot <- renderPlot({
-    # 
-    #     # generate bins based on input$bins from ui.R
-    #     x    <- faithful[, 2]
-    #     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    # 
-    #     # draw the histogram with the specified number of bins
-    #     hist(x, breaks = bins, col = 'darkgray', border = 'white',
-    #          xlab = 'Waiting time to next eruption (in mins)',
-    #          main = 'Histogram of waiting times')
-    # 
-    # })
-
 })
 
 
