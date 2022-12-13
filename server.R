@@ -6,7 +6,7 @@ library(car)
 library(caret)
 
 
-data <- read.csv("/Users/mjiwtan/Downloads/concrete_data.csv")
+data <- read.csv("concrete_data.csv")
 process <- preProcess(as.data.frame(data), method=c("range"))
 data <- predict(process, as.data.frame(data))
 data$water_category <- ifelse(data$Water>0.5, 1, 0)
